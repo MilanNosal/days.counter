@@ -1,0 +1,389 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		9940D70C1E1EC7B0005BF226 /* CountersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9940D70B1E1EC7B0005BF226 /* CountersViewController.swift */; };
+		9940D70E1E1ECCD1005BF226 /* AddCounterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9940D70D1E1ECCD1005BF226 /* AddCounterViewController.swift */; };
+		9940D7101E1ECD1F005BF226 /* KeyboardAdjustingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9940D70F1E1ECD1F005BF226 /* KeyboardAdjustingViewController.swift */; };
+		9940D7121E1F9391005BF226 /* DateUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9940D7111E1F9391005BF226 /* DateUtilities.swift */; };
+		99427F201E193C21002ED3FA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99427F1F1E193C21002ED3FA /* AppDelegate.swift */; };
+		99427F221E193C21002ED3FA /* CounterDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99427F211E193C21002ED3FA /* CounterDetailViewController.swift */; };
+		99427F251E193C21002ED3FA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 99427F231E193C21002ED3FA /* Main.storyboard */; };
+		99427F271E193C21002ED3FA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 99427F261E193C21002ED3FA /* Assets.xcassets */; };
+		99427F2A1E193C22002ED3FA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 99427F281E193C22002ED3FA /* LaunchScreen.storyboard */; };
+		99427F341E196153002ED3FA /* ManagedObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99427F331E196153002ED3FA /* ManagedObject.swift */; };
+		99427F361E1961E2002ED3FA /* Counter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99427F351E1961E2002ED3FA /* Counter.swift */; };
+		99427F391E19672D002ED3FA /* com.svagant.day.counter.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 99427F371E19672D002ED3FA /* com.svagant.day.counter.xcdatamodeld */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		9940D70B1E1EC7B0005BF226 /* CountersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CountersViewController.swift; sourceTree = "<group>"; };
+		9940D70D1E1ECCD1005BF226 /* AddCounterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddCounterViewController.swift; sourceTree = "<group>"; };
+		9940D70F1E1ECD1F005BF226 /* KeyboardAdjustingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardAdjustingViewController.swift; sourceTree = "<group>"; };
+		9940D7111E1F9391005BF226 /* DateUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateUtilities.swift; sourceTree = "<group>"; };
+		99427F1C1E193C21002ED3FA /* days.counter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = days.counter.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		99427F1F1E193C21002ED3FA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		99427F211E193C21002ED3FA /* CounterDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterDetailViewController.swift; sourceTree = "<group>"; };
+		99427F241E193C21002ED3FA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		99427F261E193C21002ED3FA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		99427F291E193C22002ED3FA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		99427F2B1E193C22002ED3FA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		99427F331E196153002ED3FA /* ManagedObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManagedObject.swift; sourceTree = "<group>"; };
+		99427F351E1961E2002ED3FA /* Counter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Counter.swift; sourceTree = "<group>"; };
+		99427F381E19672D002ED3FA /* com.svagant.day.counter.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = com.svagant.day.counter.xcdatamodel; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		99427F191E193C21002ED3FA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		9940D7131E1FD900005BF226 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				99427F211E193C21002ED3FA /* CounterDetailViewController.swift */,
+				9940D70B1E1EC7B0005BF226 /* CountersViewController.swift */,
+				9940D70D1E1ECCD1005BF226 /* AddCounterViewController.swift */,
+				9940D70F1E1ECD1F005BF226 /* KeyboardAdjustingViewController.swift */,
+			);
+			name = ViewControllers;
+			sourceTree = "<group>";
+		};
+		9940D7141E1FD91B005BF226 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				99427F331E196153002ED3FA /* ManagedObject.swift */,
+				9940D7111E1F9391005BF226 /* DateUtilities.swift */,
+			);
+			name = Utilities;
+			sourceTree = "<group>";
+		};
+		9940D7151E1FD924005BF226 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				99427F371E19672D002ED3FA /* com.svagant.day.counter.xcdatamodeld */,
+				99427F351E1961E2002ED3FA /* Counter.swift */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		9940D7161E1FD93E005BF226 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99427F231E193C21002ED3FA /* Main.storyboard */,
+				99427F281E193C22002ED3FA /* LaunchScreen.storyboard */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+		99427F131E193C21002ED3FA = {
+			isa = PBXGroup;
+			children = (
+				99427F1E1E193C21002ED3FA /* days.counter */,
+				99427F1D1E193C21002ED3FA /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		99427F1D1E193C21002ED3FA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				99427F1C1E193C21002ED3FA /* days.counter.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		99427F1E1E193C21002ED3FA /* days.counter */ = {
+			isa = PBXGroup;
+			children = (
+				99427F1F1E193C21002ED3FA /* AppDelegate.swift */,
+				99427F261E193C21002ED3FA /* Assets.xcassets */,
+				99427F2B1E193C22002ED3FA /* Info.plist */,
+				9940D7161E1FD93E005BF226 /* View */,
+				9940D7141E1FD91B005BF226 /* Utilities */,
+				9940D7151E1FD924005BF226 /* Model */,
+				9940D7131E1FD900005BF226 /* ViewControllers */,
+			);
+			path = days.counter;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		99427F1B1E193C21002ED3FA /* days.counter */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 99427F2E1E193C22002ED3FA /* Build configuration list for PBXNativeTarget "days.counter" */;
+			buildPhases = (
+				99427F181E193C21002ED3FA /* Sources */,
+				99427F191E193C21002ED3FA /* Frameworks */,
+				99427F1A1E193C21002ED3FA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = days.counter;
+			productName = days.counter;
+			productReference = 99427F1C1E193C21002ED3FA /* days.counter.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		99427F141E193C21002ED3FA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0820;
+				LastUpgradeCheck = 0820;
+				ORGANIZATIONNAME = Svagant;
+				TargetAttributes = {
+					99427F1B1E193C21002ED3FA = {
+						CreatedOnToolsVersion = 8.2;
+						DevelopmentTeam = QU9Y58GH5Y;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 99427F171E193C21002ED3FA /* Build configuration list for PBXProject "days.counter" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 99427F131E193C21002ED3FA;
+			productRefGroup = 99427F1D1E193C21002ED3FA /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				99427F1B1E193C21002ED3FA /* days.counter */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		99427F1A1E193C21002ED3FA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				99427F2A1E193C22002ED3FA /* LaunchScreen.storyboard in Resources */,
+				99427F271E193C21002ED3FA /* Assets.xcassets in Resources */,
+				99427F251E193C21002ED3FA /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		99427F181E193C21002ED3FA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				99427F361E1961E2002ED3FA /* Counter.swift in Sources */,
+				9940D7101E1ECD1F005BF226 /* KeyboardAdjustingViewController.swift in Sources */,
+				99427F391E19672D002ED3FA /* com.svagant.day.counter.xcdatamodeld in Sources */,
+				9940D70E1E1ECCD1005BF226 /* AddCounterViewController.swift in Sources */,
+				99427F221E193C21002ED3FA /* CounterDetailViewController.swift in Sources */,
+				99427F201E193C21002ED3FA /* AppDelegate.swift in Sources */,
+				9940D7121E1F9391005BF226 /* DateUtilities.swift in Sources */,
+				99427F341E196153002ED3FA /* ManagedObject.swift in Sources */,
+				9940D70C1E1EC7B0005BF226 /* CountersViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		99427F231E193C21002ED3FA /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				99427F241E193C21002ED3FA /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		99427F281E193C22002ED3FA /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				99427F291E193C22002ED3FA /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		99427F2C1E193C22002ED3FA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		99427F2D1E193C22002ED3FA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		99427F2F1E193C22002ED3FA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = QU9Y58GH5Y;
+				INFOPLIST_FILE = days.counter/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.svagant.days-counter";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		99427F301E193C22002ED3FA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = QU9Y58GH5Y;
+				INFOPLIST_FILE = days.counter/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.svagant.days-counter";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		99427F171E193C21002ED3FA /* Build configuration list for PBXProject "days.counter" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				99427F2C1E193C22002ED3FA /* Debug */,
+				99427F2D1E193C22002ED3FA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		99427F2E1E193C22002ED3FA /* Build configuration list for PBXNativeTarget "days.counter" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				99427F2F1E193C22002ED3FA /* Debug */,
+				99427F301E193C22002ED3FA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		99427F371E19672D002ED3FA /* com.svagant.day.counter.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				99427F381E19672D002ED3FA /* com.svagant.day.counter.xcdatamodel */,
+			);
+			currentVersion = 99427F381E19672D002ED3FA /* com.svagant.day.counter.xcdatamodel */;
+			path = com.svagant.day.counter.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = 99427F141E193C21002ED3FA /* Project object */;
+}
