@@ -27,9 +27,25 @@ class CountersViewController: UIViewController {
     }
     
     override func viewDidLoad() {
+        
+        counterDetailVC.parentNavigationViewController = navigationController
+        
         setupTableView()
         try! self.fetchedResultsController.performFetch()
         self.title = "Magic Days Counter"
+        
+        // Check for force touch feature, and add force touch/previewing capability.
+        if traitCollection.forceTouchCapability == .available {
+            /*
+             Register for `UIViewControllerPreviewingDelegate` to enable
+             "Peek" and "Pop".
+             (see: MasterViewController+UIViewControllerPreviewing.swift)
+             
+             The view controller will be automatically unregistered when it is
+             deallocated.
+             */
+            registerForPreviewing(with: self, sourceView: tableView)
+        }
     }
     
     private func setupTableView() {
@@ -98,7 +114,12 @@ extension CountersViewController: UITableViewDataSource {
 extension CountersViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        counterDetailVC.currentCounter = fetchedResultsController.object(at: indexPath)
+        presentCounterDetail(for: fetchedResultsController.object(at: indexPath))
+        tableView.deselectRow(at: indexPath, animated: false)
+    }
+    
+    func presentCounterDetail(for counter: Counter) {
+        counterDetailVC.currentCounter = counter
         navigationController?.pushViewController(counterDetailVC, animated: true)
     }
 }
@@ -182,3 +203,31 @@ class CounterTableViewCell: UITableViewCell {
     }
 }
 
+
+
+
+
+// MARK: Peek and pop
+extension CountersViewController: UIViewControllerPreviewingDelegate {
+    
+    /// Create a previewing view controller to be shown at "Peek".
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+        // Obtain the index path and the cell that was pressed.
+        guard let indexPath = tableView.indexPathForRow(at: location),
+            let cell = tableView.cellForRow(at: indexPath) else { return nil }
+        
+        let previewDetail = fetchedResultsController.object(at: indexPath)
+        counterDetailVC.currentCounter = previewDetail
+        
+        // Set the source rect to the cell frame, so surrounding elements are blurred.
+        previewingContext.sourceRect = cell.frame
+        
+        return counterDetailVC
+    }
+    
+    /// Present the view controller for the "Pop" action.
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+        navigationController?.pushViewController(counterDetailVC, animated: true)
+    }
+    
+}

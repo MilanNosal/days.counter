@@ -50,6 +50,46 @@ extension ManagedObjectType {
     }
 }
 
+extension ManagedObjectType where Self: ManagedObject {
+    
+    static func findOrFetch(in dataContext: NSManagedObjectContext, with id: Int) -> Self? {
+        let predicate = NSComparisonPredicate(leftExpression: NSExpression(forKeyPath: "id"), rightExpression: NSExpression(forConstantValue: id), modifier: .direct, type: .equalTo, options: .normalized)
+        return findOrFetch(in: dataContext, matchingPredicate: predicate)
+    }
+    
+    static func findOrFetch(in dataContext: NSManagedObjectContext, matchingPredicate predicate: NSPredicate) -> Self? {
+        guard let obj = materializedObject(in: dataContext, matchingPredicate: predicate) else {
+            
+            return fetch(in: dataContext) { request in
+                request.predicate = predicate
+                request.returnsObjectsAsFaults = false
+                request.fetchLimit = 1
+                }.first
+            
+        }
+        
+        return obj
+    }
+    
+    static func materializedObject(in dataContext: NSManagedObjectContext, matchingPredicate predicate: NSPredicate) -> Self? {
+        
+        for obj in dataContext.registeredObjects where !obj.isFault {
+            guard let res = obj as? Self,
+                predicate.evaluate(with: res)
+                else { continue }
+            return res
+        }
+        
+        return nil
+    }
+    
+    static func fetch(in dataContext: NSManagedObjectContext, configurationBlock: (NSFetchRequest<Self>) -> () = { _ in }) -> [Self] {
+        let request = NSFetchRequest<Self>(entityName: Self.entityName)
+        configurationBlock(request)
+        return try! dataContext.fetch(request)
+    }
+}
+
 extension NSManagedObjectContext {
     
     func createObject<MO: ManagedObject>() -> MO where MO: ManagedObjectType {
@@ -74,10 +114,11 @@ extension NSManagedObjectContext {
         }
     }
     
-    func performChanges(block: @escaping () -> ()) {
+    func performChanges(completion: ((Bool) -> Void)? = nil, block: @escaping () -> ()) {
         perform {
             block()
-            _ = self.saveOrRollback()
+            let success = self.saveOrRollback()
+            completion?(success)
         }
     }
 }

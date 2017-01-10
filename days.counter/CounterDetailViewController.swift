@@ -39,13 +39,42 @@ class CounterDetailViewController: UIViewController {
     
     fileprivate var managedContext = AppDelegate.persistentContainer.viewContext
     
-    fileprivate static let dateFormatter: DateFormatter = {
+    static let dateFormatter: DateFormatter = {
         let df = DateFormatter()
         df.locale = Locale.current
         df.dateFormat = "dd/MM/yyyy HH:mm:ss"
         return df
     }()
     
+    static let shortDateFormatter: DateFormatter = {
+        let df = DateFormatter()
+        df.locale = Locale.current
+        df.dateFormat = "dd/MM/yy HH:mm"
+        return df
+    }()
+    
+    var parentNavigationViewController: UINavigationController?
+    
+    lazy var previewActions: [UIPreviewActionItem] = {
+        
+        let action = UIPreviewAction(title: "Stop counter", style: .destructive) { previewAction, viewController in
+            print("action")
+            guard let detailViewController = viewController as? CounterDetailViewController,
+                let parentNavigationController = self.parentNavigationViewController else { return }
+            
+            print("prseeniting")
+            parentNavigationController.pushViewController(detailViewController, animated: true)
+            detailViewController.stopPressed(self)
+        }
+            
+        return [action]
+    }()
+}
+
+
+
+extension CounterDetailViewController {
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -79,7 +108,7 @@ class CounterDetailViewController: UIViewController {
         self.managedContext.refreshAllObjects()
     }
 
-    @objc fileprivate func stopPressed(_ sender: UIButton) {
+    @objc fileprivate func stopPressed(_ sender: Any) {
         
         let stopAlert = UIAlertController(title: "Stop", message: "Current counter will be stopped! Are you sure?", preferredStyle: UIAlertControllerStyle.alert)
         
@@ -173,4 +202,13 @@ extension CounterDetailViewController {
     fileprivate func invalidateTimer() {
         timer?.invalidate()
     }
+}
+
+extension CounterDetailViewController {
+    
+    override var previewActionItems : [UIPreviewActionItem] {
+        return previewActions
+    }
+    
+    
 }

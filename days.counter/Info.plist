@@ -44,9 +44,9 @@
 			<key>UIApplicationShortcutItemType</key>
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER).addCounter</string>
 			<key>UIApplicationShortcutItemTitle</key>
-			<string>Add counter</string>
-			<key>UIApplicationShortcutItemSubtitle</key>
-			<string>Adds and starts a new counter</string>
+			<string>Add new counter</string>
+			<key>UIApplicationShortcutItemIconType</key>
+			<string>UIApplicationShortcutIconTypeAdd</string>
 		</dict>
 	</array>
 </dict>

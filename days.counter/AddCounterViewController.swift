@@ -85,7 +85,7 @@ extension AddCounterViewController {
         
         contentView.addSubview(contentStackView)
         
-        titleStackView.addArrangedSubview(titleLabel)
+//        titleStackView.addArrangedSubview(titleLabel)
         titleStackView.addArrangedSubview(titleTextField)
         titleStackView.addArrangedSubview(fromLabel)
         
@@ -176,7 +176,7 @@ extension AddCounterViewController {
         
         titleLabel.text = "Counter"
         
-        titleTextField.placeholder = "title"
+        titleTextField.placeholder = "Counter's title (optional)"
         titleTextField.setContentHuggingPriority(240, for: .horizontal)
         titleTextField.borderStyle = .line
         
@@ -204,7 +204,7 @@ extension AddCounterViewController {
         
         cancelButton.setTitle("Cancel", for: .normal)
         cancelButton.setTitleColor(UIColor.red, for: .normal)
-        cancelButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 19)
+        cancelButton.titleLabel?.font = UIFont.systemFont(ofSize: 19)
         
         cancelButton.addTarget(self, action: #selector(AddCounterViewController.cancel(sender:)), for: .touchUpInside)
         
@@ -252,7 +252,12 @@ extension AddCounterViewController {
         
         let date = fromSelector.date
         
-        AppDelegate.persistentContainer.viewContext.performChanges {
+        AppDelegate.persistentContainer.viewContext.performChanges(completion: {
+            success -> Void in
+            if success {
+                (UIApplication.shared.delegate as! AppDelegate).updateDynamicShortCuts()
+            }
+        }) {
             _ = Counter.createCounter(titleReady, startingFrom: date, throughContext: AppDelegate.persistentContainer.viewContext)
         }
         

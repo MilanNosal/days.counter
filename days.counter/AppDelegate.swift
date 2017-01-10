@@ -59,22 +59,155 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
         
-        guard let shortcut = launchedShortcutItem else { return }
+        if let shortcut = launchedShortcutItem {
+            
+            _ = handle(shortcutItem: shortcut)
+            
+            launchedShortcutItem = nil
+        }
         
-        print("didBecomeActive")
-        _ = handle(shortcutItem: shortcut)
+//        let memoryTime = testInMemory()
+//        print(">>> performed inmemory in \(memoryTime)")
         
-        launchedShortcutItem = nil
+//        let materializationTime = testMaterializing()
+//        print(">>> performed materializing in \(materializationTime)")
+        
+//        let fetchTime = testFetch()
+//        print(">>> performed fetching in \(fetchTime)")
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
+    
+}
+
+
+// MARK: naive performance tests for core data
+extension AppDelegate {
+    
+    func testInMemory() -> Double {
+        
+        let context = AppDelegate.persistentContainer.viewContext
+        
+        let counter2 = Counter.findOrFetch(in: context, with: 2)
+        print("\(counter2?.title)")
+        let counter = Counter.findOrFetch(in: context, with: 1)
+        print("\(counter?.title)")
+        
+        let predicate = NSComparisonPredicate(leftExpression: NSExpression(forKeyPath: "id"), rightExpression: NSExpression(forConstantValue: 1), modifier: .direct, type: .equalTo, options: .normalized)
+        
+        var test = 0
+        
+        let startingMillis = Date()
+        
+        for _ in 0..<100000 {
+            
+            for obj in context.registeredObjects where !obj.isFault {
+                guard let res = obj as? Counter,
+                    predicate.evaluate(with: res)
+                    else { continue }
+                
+                // accessing a value to ensure materialization
+                test += res.id.intValue
+                
+                context.refresh(counter2!, mergeChanges: false)
+                
+                // breaking inner for to simulate returning a found object
+                break
+            }
+            
+//            test += counter!.id.intValue
+            
+            context.refresh(counter2!, mergeChanges: false)
+        }
+        
+        let endingMillis = Date()
+        
+        print("\(startingMillis) - \(endingMillis)")
+        
+        return Double(endingMillis.timeIntervalSince(startingMillis))
+    }
+    
+    func testMaterializing() -> Double {
+        
+        let context = AppDelegate.persistentContainer.viewContext
+        
+        let counter = Counter.findOrFetch(in: context, with: 1)!
+        print("\(counter.title)")
+        
+        context.refresh(counter, mergeChanges: false)
+        
+        print("\(counter.isFault)")
+        
+        
+        let predicate = NSComparisonPredicate(leftExpression: NSExpression(forKeyPath: "id"), rightExpression: NSExpression(forConstantValue: 1), modifier: .direct, type: .equalTo, options: .normalized)
+        
+        var test = 0
+        
+        let startingMillis = Date()
+        
+        for _ in 0..<100000 {
+            
+            // accessing a value to ensure materialization
+            test += counter.id.intValue
+            
+            // to remove threat to validity
+            predicate.evaluate(with: counter)
+            
+            context.refresh(counter, mergeChanges: false)
+        }
+        
+        let endingMillis = Date()
+        
+        print("\(startingMillis) - \(endingMillis)")
+        
+        return Double(endingMillis.timeIntervalSince(startingMillis))
+    }
+    
+    
+    func testFetch() -> Double {
+        
+        let context = AppDelegate.persistentContainer.viewContext
+        
+        let counter = Counter.findOrFetch(in: context, with: 1)!
+        print("\(counter.title)")
+        
+        context.refresh(counter, mergeChanges: false)
+        
+        print("\(counter.isFault)")
+        
+        
+        let predicate = NSComparisonPredicate(leftExpression: NSExpression(forKeyPath: "id"), rightExpression: NSExpression(forConstantValue: 1), modifier: .direct, type: .equalTo, options: .normalized)
+        
+        let request = NSFetchRequest<Counter>(entityName: "Counter")
+        request.predicate = predicate
+        request.returnsObjectsAsFaults = false
+        request.fetchLimit = 1
+        
+        var test = 0
+        
+        let startingMillis = Date()
+        
+        for _ in 0..<100000 {
+            
+            // accessing a value to ensure materialization
+            test += (try! context.fetch(request)).first!.id.intValue
+            
+            context.refresh(counter, mergeChanges: false)
+        }
+        
+        let endingMillis = Date()
+        
+        print("\(startingMillis) - \(endingMillis)")
+        
+        return Double(endingMillis.timeIntervalSince(startingMillis))
+    }
 }
 
 // MARK: - Core Data stack
 extension AppDelegate {
-    static var persistentContainer: NSPersistentContainer = {
+    @nonobjc static var persistentContainer: NSPersistentContainer = {
         /*
          The persistent container for the application. This implementation
          creates and returns a container, having loaded the store for the
@@ -142,36 +275,51 @@ extension AppDelegate {
         switch action {
         case .addCounter:
             handled = true
-            print("handling addcounter")
+            AddCounterViewController.show(answeredCallback: nil)
             
-        case .lastCounter(id: let id):
+        case .lastCounter(id: let counterId):
             handled = true
-            print("handling lastCounter\(id)")
+            guard let counter = Counter.findOrFetch(in: AppDelegate.persistentContainer.viewContext, with: counterId),
+                let rootVC = window?.rootViewController as? UINavigationController else {
+                    break
+            }
+            
+            AddCounterViewController.dismissIfNeeded(animated: false, completion: { (_) in
+            })
+            rootVC.popToRootViewController(animated: false)
+            
+            guard let countersVC = rootVC.topViewController as? CountersViewController else {
+                break
+            }
+            
+            countersVC.presentCounterDetail(for: counter)
         }
         
         return handled
     }
     
     func updateDynamicShortCuts() {
-//        // Construct the items.
-//        let shortcut3 = UIMutableApplicationShortcutItem(type: ShortcutIdentifier.Third.type, localizedTitle: "Play", localizedSubtitle: "Will Play an item", icon: UIApplicationShortcutIcon(type: .Play), userInfo: [
-//            AppDelegate.applicationShortcutUserInfoIconKey: UIApplicationShortcutIconType.Play.rawValue
-//            ]
-//        )
-//        
-//        let shortcut4 = UIMutableApplicationShortcutItem(type: ShortcutIdentifier.Fourth.type, localizedTitle: "Pause", localizedSubtitle: "Will Pause an item", icon: UIApplicationShortcutIcon(type: .Pause), userInfo: [
-//            AppDelegate.applicationShortcutUserInfoIconKey: UIApplicationShortcutIconType.Pause.rawValue
-//            ]
-//        )
-//        
-//        // Update the application providing the initial 'dynamic' shortcut items.
-//        application.shortcutItems = [shortcut3, shortcut4]
+        
+        let lastCounters = Counter.last3RunnningCounters(dataContext: AppDelegate.persistentContainer.viewContext)
+        
+        var actionItems: [UIMutableApplicationShortcutItem] = []
+        
+        for counter in lastCounters {
+            
+            let time = counter.end == nil ? timePassed(since: counter.start) : timePassed(since: counter.start, to: counter.end!)
+            
+            let text = time.days == 1 ? "\(time.days) day" : "\(time.days) days"
+            
+            actionItems.append(UIMutableApplicationShortcutItem(type: QuickActions.lastCounter(id: counter.id.intValue).type, localizedTitle: "\(text) - '\(counter.title)'", localizedSubtitle: "Last edit: \(CounterDetailViewController.shortDateFormatter.string(from: counter.lastEditDate))", icon: UIApplicationShortcutIcon(templateImageName: "eyeIcon"), userInfo: nil))
+            
+        }
+        
+        // Update the application providing the initial 'dynamic' shortcut items.
+        UIApplication.shared.shortcutItems = actionItems
     }
     
     // Called only when applicationDidLaunch returns true, in our case it means when application was reactivated instead of relaunched
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
-        
-        print("performAction")
         
         let handledShortCutItem = handle(shortcutItem: shortcutItem)
         
