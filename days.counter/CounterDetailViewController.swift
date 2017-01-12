@@ -58,15 +58,15 @@ class CounterDetailViewController: UIViewController {
     lazy var previewActions: [UIPreviewActionItem] = {
         
         let action = UIPreviewAction(title: "Stop counter", style: .destructive) { previewAction, viewController in
-            print("action")
             guard let detailViewController = viewController as? CounterDetailViewController,
                 let parentNavigationController = self.parentNavigationViewController else { return }
             
-            print("prseeniting")
-            parentNavigationController.pushViewController(detailViewController, animated: true)
-            detailViewController.stopPressed(self)
+            DispatchQueue.main.async {
+                parentNavigationController.pushViewController(detailViewController, animated: true)
+                detailViewController.stopPressed(self)
+            }
         }
-            
+        
         return [action]
     }()
 }
@@ -114,7 +114,13 @@ extension CounterDetailViewController {
         
         stopAlert.addAction(UIAlertAction(title: "Stop", style: .destructive, handler: { (action: UIAlertAction!) in
             
-            self.managedContext.performChanges {
+            self.managedContext.performChanges(completion: {
+                success -> Void in
+                
+                if success {
+                    (UIApplication.shared.delegate as! AppDelegate).updateDynamicShortCuts()
+                }
+            }) {
                 if let currentCounter = self.currentCounter {
                     currentCounter.state = .stopped
                 }

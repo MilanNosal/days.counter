@@ -56,7 +56,7 @@ extension Counter: ManagedObjectType {
         ]
     }
     
-    static func last3RunnningCounters(dataContext: NSManagedObjectContext) -> [Counter] {
+    static func lastRunnningCounters(dataContext: NSManagedObjectContext) -> [Counter] {
         
         let countersRequest = NSFetchRequest<Counter>(entityName: entityName)
         

@@ -254,6 +254,7 @@ extension AddCounterViewController {
         
         AppDelegate.persistentContainer.viewContext.performChanges(completion: {
             success -> Void in
+            
             if success {
                 (UIApplication.shared.delegate as! AppDelegate).updateDynamicShortCuts()
             }

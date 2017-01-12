@@ -54,6 +54,7 @@ extension ManagedObjectType where Self: ManagedObject {
     
     static func findOrFetch(in dataContext: NSManagedObjectContext, with id: Int) -> Self? {
         let predicate = NSComparisonPredicate(leftExpression: NSExpression(forKeyPath: "id"), rightExpression: NSExpression(forConstantValue: id), modifier: .direct, type: .equalTo, options: .normalized)
+        
         return findOrFetch(in: dataContext, matchingPredicate: predicate)
     }
     

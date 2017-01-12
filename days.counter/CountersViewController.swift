@@ -30,9 +30,10 @@ class CountersViewController: UIViewController {
         
         counterDetailVC.parentNavigationViewController = navigationController
         
-        setupTableView()
-        try! self.fetchedResultsController.performFetch()
         self.title = "Magic Days Counter"
+        self.navigationItem.leftBarButtonItem = self.editButtonItem;
+        
+        setupTableView()
         
         // Check for force touch feature, and add force touch/previewing capability.
         if traitCollection.forceTouchCapability == .available {
@@ -61,6 +62,7 @@ class CountersViewController: UIViewController {
         request.fetchBatchSize = 20
         fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: AppDelegate.persistentContainer.viewContext, sectionNameKeyPath: "state", cacheName: nil)
         fetchedResultsController.delegate = self
+        try! self.fetchedResultsController.performFetch()
     }
 
 }
@@ -121,6 +123,35 @@ extension CountersViewController: UITableViewDelegate {
     func presentCounterDetail(for counter: Counter) {
         counterDetailVC.currentCounter = counter
         navigationController?.pushViewController(counterDetailVC, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        
+        // edit action
+        let editAction = UITableViewRowAction(style: .default, title: "Edit", handler: { (action, indexPath) in
+            
+            print("wut tu du?")
+        })
+        editAction.backgroundColor = UIColor.blue
+        
+        // delete action
+        let deleteAction = UITableViewRowAction(style: .default, title: "Delete", handler: { (action, indexPath) in
+            
+            let counter = self.fetchedResultsController.object(at: indexPath)
+            
+            AppDelegate.persistentContainer.viewContext.performChanges(completion: {
+                success -> Void in
+                
+                if success {
+                    (UIApplication.shared.delegate as! AppDelegate).updateDynamicShortCuts()
+                }
+            }) {
+                AppDelegate.persistentContainer.viewContext.delete(counter)
+            }
+        })
+        deleteAction.backgroundColor = UIColor.red
+        
+        return [deleteAction, editAction]
     }
 }
 

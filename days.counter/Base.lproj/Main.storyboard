@@ -179,7 +179,7 @@
         <scene sceneID="LuB-nx-2KP">
             <objects>
                 <navigationController id="bsQ-re-mp5" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="yXu-3Q-tt1">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" backIndicatorTransitionMaskImage="I" id="yXu-3Q-tt1">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -240,6 +240,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="I" width="16" height="16"/>
         <image name="plus" width="22" height="22"/>
         <image name="unicornIcon" width="500" height="500"/>
     </resources>

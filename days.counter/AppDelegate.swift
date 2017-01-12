@@ -1,4 +1,4 @@
-//
+
 //  AppDelegate.swift
 //  days.counter
 //
@@ -66,14 +66,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             launchedShortcutItem = nil
         }
         
-//        let memoryTime = testInMemory()
-//        print(">>> performed inmemory in \(memoryTime)")
         
-//        let materializationTime = testMaterializing()
-//        print(">>> performed materializing in \(materializationTime)")
+//        let attr = try! FileManager.default.attributesOfItem(atPath: AppDelegate.persistentContainer.persistentStoreDescriptions.first!.url!.absoluteString)
+//        print("\(attr)")
         
-//        let fetchTime = testFetch()
-//        print(">>> performed fetching in \(fetchTime)")
+        testing()
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
@@ -85,6 +82,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 // MARK: naive performance tests for core data
 extension AppDelegate {
+    
+    func testing() {
+        
+        //        let memoryTime = testInMemory()
+        //        print(">>> performed inmemory in \(memoryTime)")
+        
+        //        let materializationTime = testMaterializing()
+        //        print(">>> performed materializing in \(materializationTime)")
+        
+        //        let fetchTime = testFetch()
+        //        print(">>> performed fetching in \(fetchTime)")
+        
+//        insertTestingSample()
+        
+//        print(">>> performed fetching in \(testFindingInLarge())")
+    }
     
     func testInMemory() -> Double {
         
@@ -203,6 +216,97 @@ extension AppDelegate {
         
         return Double(endingMillis.timeIntervalSince(startingMillis))
     }
+    
+//    func testFindingInLarge() -> Double {
+//        
+//        let context = AppDelegate.persistentContainer.viewContext
+        
+        
+//        let request: NSFetchRequest<Counter> = NSFetchRequest<Counter>(entityName: "Counter")
+//        request.returnsObjectsAsFaults = true
+//        
+//        request.predicate = NSPredicate(format: "start >= %@", argumentArray: [Date(timeIntervalSinceNow: -60*60*12)])
+//        let counters = try! context.fetch(request)
+//        
+//        let idOfLast = counters.last!.id
+        
+//        print("12448666")
+//        
+//        let predicate = NSPredicate(format: "%K == %ld", "id", 12448666)
+//        
+//        let startingMillis = Date()
+//        
+//        let co = Counter.fetch(in: context) { request in
+//                request.predicate = predicate
+//                request.returnsObjectsAsFaults = false
+//        }
+//        
+//        let endingMillis = Date()
+//        
+//        print("\(co)")
+//        
+//        return Double(endingMillis.timeIntervalSince(startingMillis))
+        
+//        
+//        context.refresh(counter, mergeChanges: false)
+//        
+//        print("\(counter.isFault)")
+//        
+//        
+//        let predicate = NSComparisonPredicate(leftExpression: NSExpression(forKeyPath: "id"), rightExpression: NSExpression(forConstantValue: 1), modifier: .direct, type: .equalTo, options: .normalized)
+//        
+//        let request = NSFetchRequest<Counter>(entityName: "Counter")
+//        request.predicate = predicate
+//        request.returnsObjectsAsFaults = false
+//        request.fetchLimit = 1
+//        
+//        var test = 0
+//        
+//        let startingMillis = Date()
+//        
+//        for _ in 0..<100000 {
+//            
+//            // accessing a value to ensure materialization
+//            test += (try! context.fetch(request)).first!.id.intValue
+//            
+//            context.refresh(counter, mergeChanges: false)
+//        }
+//        
+//        let endingMillis = Date()
+//        
+//        print("\(startingMillis) - \(endingMillis)")
+//        
+//        return Double(endingMillis.timeIntervalSince(startingMillis))
+//    }
+    
+    func insertTestingSample() {
+        
+        AppDelegate.persistentContainer.viewContext.performChanges {
+            for i in 0..<10000000 {
+                
+                if i % 5000 == 0 {
+                    print(">>> \(i)")
+                    _ = AppDelegate.persistentContainer.viewContext.saveOrRollback()
+                }
+                
+                let rnd = Int(arc4random_uniform(10000)) * -60
+                let date = Date(timeIntervalSinceNow: Double(rnd))
+                
+                _ = Counter.createCounter("test\(i)", startingFrom: date, throughContext: AppDelegate.persistentContainer.viewContext)
+                
+            }
+        }
+        
+//        AppDelegate.persistentContainer.viewContext.performChanges {
+//            
+//            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Counter")
+//            fetchRequest.predicate = NSPredicate(format: "start >= %@", argumentArray: [Date()])
+//            
+//            let batchDelete = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+//            batchDelete.resultType = .resultTypeCount
+//            let result = try! AppDelegate.persistentContainer.viewContext.execute(batchDelete) as! NSBatchDeleteResult
+//        }
+    }
 }
 
 // MARK: - Core Data stack
@@ -300,7 +404,7 @@ extension AppDelegate {
     
     func updateDynamicShortCuts() {
         
-        let lastCounters = Counter.last3RunnningCounters(dataContext: AppDelegate.persistentContainer.viewContext)
+        let lastCounters = Counter.lastRunnningCounters(dataContext: AppDelegate.persistentContainer.viewContext)
         
         var actionItems: [UIMutableApplicationShortcutItem] = []
         
