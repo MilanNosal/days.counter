@@ -11,7 +11,7 @@ import UIKit
 class AddCounterViewController: KeyboardAdjustingViewController {
     
     fileprivate var dismissalCallback: ((AddCounterViewController) -> Void)?
-    fileprivate var answeredCallback: ((AddCounterViewController) -> Void)?
+    fileprivate var answeredCallback: ((AddCounterViewController, String?, Date) -> Void)?
     
     static let popupBorders = CGFloat(19)
     static let popupContentVertBorders = CGFloat(14)
@@ -37,8 +37,12 @@ class AddCounterViewController: KeyboardAdjustingViewController {
     fileprivate let confirmButton = UIButton()
     fileprivate let cancelButton = UIButton()
     
-    init() {
+    // not to be edited
+    fileprivate var originalCounter: Counter?
+    
+    init(originalCounter: Counter?) {
         super.init(nibName: nil, bundle: nil)
+        self.originalCounter = originalCounter
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -85,7 +89,6 @@ extension AddCounterViewController {
         
         contentView.addSubview(contentStackView)
         
-//        titleStackView.addArrangedSubview(titleLabel)
         titleStackView.addArrangedSubview(titleTextField)
         titleStackView.addArrangedSubview(fromLabel)
         
@@ -109,7 +112,6 @@ extension AddCounterViewController {
             bubbleView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: AddCounterViewController.popupBorders),
             bubbleView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -AddCounterViewController.popupBorders),
             bubbleView.bottomAnchor.constraint(equalTo: self.keyboardAwareBottomLayoutGuide.topAnchor, constant: -AddCounterViewController.popupBorders)
-//            bubbleView.topAnchor.constraint(equalTo: view.topAnchor, constant: AddCounterViewController.popupBorders + 5)
             ])
         
         
@@ -172,9 +174,7 @@ extension AddCounterViewController {
         contentView.backgroundColor = .white
         
         headerLabel.font = UIFont.boldSystemFont(ofSize: 19)
-        headerLabel.text = "Add new counter"
-        
-        titleLabel.text = "Counter"
+        headerLabel.text = originalCounter == nil ? "Add new counter" : "Edit \(originalCounter!.title)"
         
         titleTextField.placeholder = "Counter's title (optional)"
         titleTextField.setContentHuggingPriority(240, for: .horizontal)
@@ -196,7 +196,7 @@ extension AddCounterViewController {
         contentStackView.spacing = 0
         contentStackView.alignment = .center
         
-        confirmButton.setTitle("Add", for: .normal)
+        confirmButton.setTitle(originalCounter == nil ? "Add" : "Save", for: .normal)
         confirmButton.setTitleColor(UIColor.blue, for: .normal)
         confirmButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 19)
         
@@ -208,6 +208,10 @@ extension AddCounterViewController {
         
         cancelButton.addTarget(self, action: #selector(AddCounterViewController.cancel(sender:)), for: .touchUpInside)
         
+        if let originalCounter = originalCounter {
+            titleTextField.text = originalCounter.title
+            fromSelector.date = originalCounter.start
+        }
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -252,18 +256,9 @@ extension AddCounterViewController {
         
         let date = fromSelector.date
         
-        AppDelegate.persistentContainer.viewContext.performChanges(completion: {
-            success -> Void in
-            
-            if success {
-                (UIApplication.shared.delegate as! AppDelegate).updateDynamicShortCuts()
-            }
-        }) {
-            _ = Counter.createCounter(titleReady, startingFrom: date, throughContext: AppDelegate.persistentContainer.viewContext)
-        }
-        
         self.dismissPresented(animated: true) {
-            self.dismissalCallback?(self)
+            self.answeredCallback?(self, titleReady, date)
+//            self.dismissalCallback?(self)
         }
     }
 }
@@ -344,8 +339,9 @@ extension AddCounterViewController {
     }
     
     private static func present(
+        counter: Counter?,
         animated: Bool = true,
-        answeredCallback: ((AddCounterViewController) -> Void)?,
+        answeredCallback: ((AddCounterViewController, String?, Date) -> Void)?,
         dismissalCallback: ((AddCounterViewController) -> Void)?,
         _ presentCompletionBlock: ((AddCounterViewController) -> Void)?) {
         
@@ -355,12 +351,12 @@ extension AddCounterViewController {
             return
         }
         
+        let popup = AddCounterViewController(originalCounter: counter)
+        
+        popup.answeredCallback = answeredCallback
+        popup.dismissalCallback = dismissalCallback
+        
         if animated {
-            
-            let popup = AddCounterViewController()
-            
-            popup.answeredCallback = answeredCallback
-            popup.dismissalCallback = dismissalCallback
             
             popup.view.alpha = 0
             
@@ -381,11 +377,6 @@ extension AddCounterViewController {
             
         } else {
             
-            let popup = AddCounterViewController()
-            
-            popup.answeredCallback = answeredCallback
-            popup.dismissalCallback = dismissalCallback
-            
             Static.window.isHidden = false
             Static.window.rootViewController!.present(popup, animated: false, completion: {
                 
@@ -398,7 +389,8 @@ extension AddCounterViewController {
     }
     
     static func show(
-        answeredCallback: ((AddCounterViewController) -> Void)?,
+        counter: Counter?,
+        answeredCallback: ((AddCounterViewController, String?, Date) -> Void)?,
         dismissalCallback: ((AddCounterViewController) -> Void)? = nil) {
         
         precondition(Thread.isMainThread)
@@ -407,7 +399,47 @@ extension AddCounterViewController {
             (_) in
             
             AddCounterViewController.present(
+                counter: counter,
                 answeredCallback: answeredCallback, dismissalCallback: dismissalCallback, nil)
+        })
+    }
+    
+    static func addNewCounter(
+        answeredCallback: ((AddCounterViewController, String?, Date) -> Void)? = nil,
+        dismissalCallback: ((AddCounterViewController) -> Void)? = nil) {
+        
+        AddCounterViewController.show(counter: nil, answeredCallback: {
+            (addCounterViewController, title, startDate) in
+            
+            AppDelegate.persistentContainer.viewContext.performChanges(completion: {
+                success -> Void in
+                
+                if success {
+                    (UIApplication.shared.delegate as! AppDelegate).updateDynamicShortCuts()
+                }
+            }) {
+                _ = Counter.createCounter(title, startingFrom: startDate, throughContext: AppDelegate.persistentContainer.viewContext)
+            }
+        })
+    }
+    
+    static func edit(
+        counter: Counter,
+        answeredCallback: ((AddCounterViewController, String?, Date) -> Void)? = nil,
+        dismissalCallback: ((AddCounterViewController) -> Void)? = nil) {
+        
+        AddCounterViewController.show(counter: counter, answeredCallback: {
+            (addCounterViewController, title, startDate) in
+            
+            AppDelegate.persistentContainer.viewContext.performChanges(completion: {
+                success -> Void in
+                
+                if success {
+                    (UIApplication.shared.delegate as! AppDelegate).updateDynamicShortCuts()
+                }
+            }) {
+                counter.update(title: title, startDate: startDate)
+            }
         })
     }
 }

@@ -22,7 +22,7 @@ class CountersViewController: UIViewController {
     
     @IBAction func addNewCounter(_ sender: UIBarButtonItem) {
         
-        AddCounterViewController.show(answeredCallback: nil)
+        AddCounterViewController.addNewCounter()
         
     }
     
@@ -31,7 +31,6 @@ class CountersViewController: UIViewController {
         counterDetailVC.parentNavigationViewController = navigationController
         
         self.title = "Magic Days Counter"
-        self.navigationItem.leftBarButtonItem = self.editButtonItem;
         
         setupTableView()
         
@@ -127,17 +126,17 @@ extension CountersViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         
+        let counter = self.fetchedResultsController.object(at: indexPath)
+        
         // edit action
         let editAction = UITableViewRowAction(style: .default, title: "Edit", handler: { (action, indexPath) in
             
-            print("wut tu du?")
+            AddCounterViewController.edit(counter: counter)
         })
         editAction.backgroundColor = UIColor.blue
         
         // delete action
         let deleteAction = UITableViewRowAction(style: .default, title: "Delete", handler: { (action, indexPath) in
-            
-            let counter = self.fetchedResultsController.object(at: indexPath)
             
             AppDelegate.persistentContainer.viewContext.performChanges(completion: {
                 success -> Void in
@@ -151,7 +150,7 @@ extension CountersViewController: UITableViewDelegate {
         })
         deleteAction.backgroundColor = UIColor.red
         
-        return [deleteAction, editAction]
+        return counter.state == .running ? [deleteAction, editAction] : [deleteAction]
     }
 }
 

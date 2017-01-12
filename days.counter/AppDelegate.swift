@@ -143,7 +143,7 @@ extension AppDelegate {
         switch action {
         case .addCounter:
             handled = true
-            AddCounterViewController.show(answeredCallback: nil)
+            AddCounterViewController.addNewCounter()
             
         case .lastCounter(id: let counterId):
             handled = true

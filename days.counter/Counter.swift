@@ -28,18 +28,43 @@ public class Counter: ManagedObject {
     
     @NSManaged private(set) var end: Date?
     
-    /* @NSManaged */ var state: StateType {
+    /* @NSManaged */ fileprivate(set) var state: StateType {
         get {
             return getFromRawValue(forKey: "state")!
         }
         set {
-            if newValue == .stopped {
-                end = Date()
-            }
             setRawValue(newValue, forKey: "state")
         }
     }
     
+    func update(title: String?, startDate: Date) {
+        
+        if let title = title, title != self.title {
+            self.title = title
+            print("changing title")
+        }
+        
+        if startDate != self.start {
+            self.start = startDate
+            print("changing date")
+        }
+        
+        if self.hasChanges {
+            lastEditDate = Date()
+        }
+    }
+    
+    func stop() {
+        self.state = .stopped
+        end = Date()
+        lastEditDate = Date()
+    }
+    
+    func restart() {
+        self.state = .running
+        end = nil
+        lastEditDate = Date()
+    }
 }
 
 extension Counter: ManagedObjectType {

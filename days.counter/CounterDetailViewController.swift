@@ -26,12 +26,14 @@ class CounterDetailViewController: UIViewController {
     
     @IBOutlet var counterTitleLabel: UILabel!
     
+    fileprivate var stopButton: UIBarButtonItem!
+    
     var currentCounter: Counter? {
         didSet {
-            if self.isViewLoaded {
-                
-                resetView()
-            }
+//            if self.isViewLoaded {
+//                
+//                resetView()
+//            }
         }
     }
     
@@ -54,21 +56,6 @@ class CounterDetailViewController: UIViewController {
     }()
     
     var parentNavigationViewController: UINavigationController?
-    
-    lazy var previewActions: [UIPreviewActionItem] = {
-        
-        let action = UIPreviewAction(title: "Stop counter", style: .destructive) { previewAction, viewController in
-            guard let detailViewController = viewController as? CounterDetailViewController,
-                let parentNavigationController = self.parentNavigationViewController else { return }
-            
-            DispatchQueue.main.async {
-                parentNavigationController.pushViewController(detailViewController, animated: true)
-                detailViewController.stopPressed(self)
-            }
-        }
-        
-        return [action]
-    }()
 }
 
 
@@ -80,20 +67,20 @@ extension CounterDetailViewController {
         
         navigationItem.title = currentCounter?.title
         
-        let stopButton = UIBarButtonItem(title: "Stop", style: .plain, target: self, action: #selector(CounterDetailViewController.stopPressed(_:)))
+        stopButton = UIBarButtonItem(title: "Stop", style: .plain, target: self, action: #selector(CounterDetailViewController.stopPressed(_:)))
         
         navigationItem.rightBarButtonItem = stopButton
         
         resetView()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
         navigationItem.title = currentCounter?.title
+        stopButton.title = currentCounter?.state == StateType.stopped ? "Restart" : "Stop"
         
         resetView()
-        setupTimer()
         
     }
     
@@ -110,31 +97,28 @@ extension CounterDetailViewController {
 
     @objc fileprivate func stopPressed(_ sender: Any) {
         
-        let stopAlert = UIAlertController(title: "Stop", message: "Current counter will be stopped! Are you sure?", preferredStyle: UIAlertControllerStyle.alert)
+        guard let currentCounter = currentCounter else {
+            fatalError()
+        }
         
-        stopAlert.addAction(UIAlertAction(title: "Stop", style: .destructive, handler: { (action: UIAlertAction!) in
+        self.managedContext.performChanges(completion: {
+            success -> Void in
             
-            self.managedContext.performChanges(completion: {
-                success -> Void in
-                
-                if success {
-                    (UIApplication.shared.delegate as! AppDelegate).updateDynamicShortCuts()
-                }
-            }) {
-                if let currentCounter = self.currentCounter {
-                    currentCounter.state = .stopped
-                }
-                
-                self.resetView()
-                self.invalidateTimer()
+            self.resetView()
+            
+            if success {
+                (UIApplication.shared.delegate as! AppDelegate).updateDynamicShortCuts()
             }
             
-        }))
-        
-        stopAlert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
-        
-        
-        present(stopAlert, animated: true, completion: nil)
+            self.stopButton.title = currentCounter.state == .running ? "Stop" : "Restart"
+        }) {
+            
+            if currentCounter.state == .running {
+                currentCounter.stop()
+            } else {
+                currentCounter.restart()
+            }
+        }
     }
 }
 
@@ -190,19 +174,20 @@ extension CounterDetailViewController {
         tensOfSecondsLabel.text = passedTimeComponents.secondTens
         onesOfSecondsLabel.text = passedTimeComponents.secondOnes
         
-        if currentCounter?.state == .stopped {
-            timer?.invalidate()
-        }
+        setupTimer()
     }
 }
 
 extension CounterDetailViewController {
     
     fileprivate func setupTimer() {
-        setPassedTime()
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { (timer) in
-            self.setPassedTime()
-        })
+        timer?.invalidate()
+        if currentCounter?.state == .running {
+            
+            timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { (timer) in
+                self.setPassedTime()
+            })
+        }
     }
     
     fileprivate func invalidateTimer() {
@@ -213,7 +198,16 @@ extension CounterDetailViewController {
 extension CounterDetailViewController {
     
     override var previewActionItems : [UIPreviewActionItem] {
-        return previewActions
+        
+        return [UIPreviewAction(title: self.currentCounter?.state == StateType.running ? "Stop counter" : "Restart counter", style: self.currentCounter?.state == StateType.running ? .destructive : .default) { previewAction, viewController in
+            guard let detailViewController = viewController as? CounterDetailViewController,
+                let parentNavigationController = self.parentNavigationViewController else { return }
+            
+            DispatchQueue.main.async {
+                parentNavigationController.pushViewController(detailViewController, animated: true)
+                detailViewController.stopPressed(self)
+            }
+            }]
     }
     
     
