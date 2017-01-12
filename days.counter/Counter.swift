@@ -41,12 +41,10 @@ public class Counter: ManagedObject {
         
         if let title = title, title != self.title {
             self.title = title
-            print("changing title")
         }
         
         if startDate != self.start {
             self.start = startDate
-            print("changing date")
         }
         
         if self.hasChanges {

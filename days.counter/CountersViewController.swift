@@ -131,7 +131,13 @@ extension CountersViewController: UITableViewDelegate {
         // edit action
         let editAction = UITableViewRowAction(style: .default, title: "Edit", handler: { (action, indexPath) in
             
-            AddCounterViewController.edit(counter: counter)
+            AddCounterViewController.edit(counter: counter,
+                                          answeredCallback: nil,
+                                          dismissalCallback: {
+                                            _ in
+                                            
+                                            self.tableView.setEditing(false, animated: true)
+            })
         })
         editAction.backgroundColor = UIColor.blue
         

@@ -258,7 +258,7 @@ extension AddCounterViewController {
         
         self.dismissPresented(animated: true) {
             self.answeredCallback?(self, titleReady, date)
-//            self.dismissalCallback?(self)
+            self.dismissalCallback?(self)
         }
     }
 }
@@ -417,10 +417,12 @@ extension AddCounterViewController {
                 if success {
                     (UIApplication.shared.delegate as! AppDelegate).updateDynamicShortCuts()
                 }
+                
+                answeredCallback?(addCounterViewController, title, startDate)
             }) {
                 _ = Counter.createCounter(title, startingFrom: startDate, throughContext: AppDelegate.persistentContainer.viewContext)
             }
-        })
+        }, dismissalCallback: dismissalCallback)
     }
     
     static func edit(
@@ -437,9 +439,11 @@ extension AddCounterViewController {
                 if success {
                     (UIApplication.shared.delegate as! AppDelegate).updateDynamicShortCuts()
                 }
+                
+                answeredCallback?(addCounterViewController, title, startDate)
             }) {
                 counter.update(title: title, startDate: startDate)
             }
-        })
+        }, dismissalCallback: dismissalCallback)
     }
 }
