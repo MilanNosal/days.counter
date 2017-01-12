@@ -144,15 +144,31 @@ extension CountersViewController: UITableViewDelegate {
         // delete action
         let deleteAction = UITableViewRowAction(style: .default, title: "Delete", handler: { (action, indexPath) in
             
-            AppDelegate.persistentContainer.viewContext.performChanges(completion: {
-                success -> Void in
+            let deleteAlert = UIAlertController(title: "Delete", message: "Are you sure to delete this counter?", preferredStyle: UIAlertControllerStyle.alert)
+            
+            deleteAlert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (action: UIAlertAction!) in
                 
-                if success {
-                    (UIApplication.shared.delegate as! AppDelegate).updateDynamicShortCuts()
+                AppDelegate.persistentContainer.viewContext.performChanges(completion: {
+                    success -> Void in
+                    
+                    if success {
+                        (UIApplication.shared.delegate as! AppDelegate).updateDynamicShortCuts()
+                    }
+                }) {
+                    AppDelegate.persistentContainer.viewContext.delete(counter)
                 }
-            }) {
-                AppDelegate.persistentContainer.viewContext.delete(counter)
-            }
+                
+            }))
+            
+            deleteAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {(action: UIAlertAction!) in
+                    self.tableView.setEditing(false, animated: true)
+            
+            }))
+            
+            
+            self.present(deleteAlert, animated: true, completion: nil)
+
+            
         })
         deleteAction.backgroundColor = UIColor.red
         
