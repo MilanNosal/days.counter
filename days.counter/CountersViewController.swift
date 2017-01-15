@@ -59,7 +59,7 @@ class CountersViewController: UIViewController {
         let request: NSFetchRequest<Counter> = Counter.sortedFetchRequest()
         request.returnsObjectsAsFaults = false
         request.fetchBatchSize = 20
-        fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: AppDelegate.persistentContainer.viewContext, sectionNameKeyPath: "state", cacheName: nil)
+        fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: "state", cacheName: nil)
         fetchedResultsController.delegate = self
         try! self.fetchedResultsController.performFetch()
     }
@@ -128,6 +128,21 @@ extension CountersViewController: UITableViewDelegate {
         
         let counter = self.fetchedResultsController.object(at: indexPath)
         
+        // touch action
+        let touchAction = UITableViewRowAction(style: .default, title: "Touch", handler: { (action, indexPath) in
+            
+            managedObjectContext.performChanges(completion: {
+                success -> Void in
+                
+                if success {
+                    (UIApplication.shared.delegate as! AppDelegate).updateDynamicShortCuts()
+                }
+            }) {
+                counter.lastEditDate = Date()
+            }
+        })
+        touchAction.backgroundColor = UIColor.green
+        
         // edit action
         let editAction = UITableViewRowAction(style: .default, title: "Edit", handler: { (action, indexPath) in
             
@@ -148,19 +163,20 @@ extension CountersViewController: UITableViewDelegate {
             
             deleteAlert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (action: UIAlertAction!) in
                 
-                AppDelegate.persistentContainer.viewContext.performChanges(completion: {
+                managedObjectContext.performChanges(completion: {
                     success -> Void in
                     
                     if success {
                         (UIApplication.shared.delegate as! AppDelegate).updateDynamicShortCuts()
                     }
                 }) {
-                    AppDelegate.persistentContainer.viewContext.delete(counter)
+                    managedObjectContext.delete(counter)
                 }
                 
             }))
             
             deleteAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {(action: UIAlertAction!) in
+                
                     self.tableView.setEditing(false, animated: true)
             
             }))
@@ -172,7 +188,7 @@ extension CountersViewController: UITableViewDelegate {
         })
         deleteAction.backgroundColor = UIColor.red
         
-        return counter.state == .running ? [deleteAction, editAction] : [deleteAction]
+        return counter.state == .running ? [deleteAction, editAction, touchAction] : [deleteAction]
     }
 }
 

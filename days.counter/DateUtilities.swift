@@ -9,6 +9,20 @@
 import Foundation
 
 
+let dateFormatter: DateFormatter = {
+    let df = DateFormatter()
+    df.locale = Locale.current
+    df.dateFormat = "dd/MM/yyyy HH:mm:ss"
+    return df
+}()
+
+let shortDateFormatter: DateFormatter = {
+    let df = DateFormatter()
+    df.locale = Locale.current
+    df.dateFormat = "dd/MM/yy HH:mm"
+    return df
+}()
+
 func timePassedAsStringComponents(since date: Date, to toDate: Date = Date()) -> (days: String, hourTens: String, hourOnes: String, minuteTens: String, minuteOnes: String, secondTens: String, secondOnes: String) {
     let components = timePassed(since: date, to: toDate)
     let hourTens: Int = components.hours / 10

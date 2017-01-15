@@ -39,22 +39,6 @@ class CounterDetailViewController: UIViewController {
     
     fileprivate var timer: Timer?
     
-    fileprivate var managedContext = AppDelegate.persistentContainer.viewContext
-    
-    static let dateFormatter: DateFormatter = {
-        let df = DateFormatter()
-        df.locale = Locale.current
-        df.dateFormat = "dd/MM/yyyy HH:mm:ss"
-        return df
-    }()
-    
-    static let shortDateFormatter: DateFormatter = {
-        let df = DateFormatter()
-        df.locale = Locale.current
-        df.dateFormat = "dd/MM/yy HH:mm"
-        return df
-    }()
-    
     var parentNavigationViewController: UINavigationController?
 }
 
@@ -92,7 +76,7 @@ extension CounterDetailViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         
-        self.managedContext.refreshAllObjects()
+        managedObjectContext.refreshAllObjects()
     }
 
     @objc fileprivate func stopPressed(_ sender: Any) {
@@ -101,7 +85,7 @@ extension CounterDetailViewController {
             fatalError()
         }
         
-        self.managedContext.performChanges(completion: {
+        managedObjectContext.performChanges(completion: {
             success -> Void in
             
             self.resetView()
@@ -144,7 +128,7 @@ extension CounterDetailViewController {
             
             navigationItem.title = currentCounter.title
             
-            dayOfResetLabel.text = CounterDetailViewController.dateFormatter.string(from: currentCounter.start)
+            dayOfResetLabel.text = dateFormatter.string(from: currentCounter.start)
             
             counterTitleLabel.text = "\(currentCounter.title) is \(currentCounter.state.rawValue.lowercased())"
             

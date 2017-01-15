@@ -16,6 +16,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     /// Saved shortcut item used as a result of an app launch, used later when app is activated.
     var launchedShortcutItem: UIApplicationShortcutItem?
+    
+    var launchedURL: URL?
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
@@ -27,6 +29,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let shortcutItem = launchOptions?[UIApplicationLaunchOptionsKey.shortcutItem] as? UIApplicationShortcutItem {
             
             launchedShortcutItem = shortcutItem
+            
+            // This will block "performActionForShortcutItem:completionHandler" from being called.
+            shouldPerformAdditionalDelegateHandling = false
+        }
+        
+        if let url = launchOptions?[UIApplicationLaunchOptionsKey.url] as? URL,
+            url.scheme == urlSchemeDaysCounter {
+            
+            launchedURL = url
             
             // This will block "performActionForShortcutItem:completionHandler" from being called.
             shouldPerformAdditionalDelegateHandling = false
@@ -65,6 +76,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             launchedShortcutItem = nil
         }
+        
+        if let url = launchedURL {
+            
+            _ = handle(URL: url)
+            
+            launchedURL = nil
+        }
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
@@ -73,65 +91,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
 }
 
-// MARK: - Core Data stack
-extension AppDelegate {
-    @nonobjc static var persistentContainer: NSPersistentContainer = {
-        /*
-         The persistent container for the application. This implementation
-         creates and returns a container, having loaded the store for the
-         application to it. This property is optional since there are legitimate
-         error conditions that could cause the creation of the store to fail.
-         */
-        let container = NSPersistentContainer(name: "com.svagant.day.counter")
-        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
-            if let error = error as NSError? {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                
-                /*
-                 Typical reasons for an error here include:
-                 * The parent directory does not exist, cannot be created, or disallows writing.
-                 * The persistent store is not accessible, due to permissions or data protection when the device is locked.
-                 * The device is out of space.
-                 * The store could not be migrated to the current model version.
-                 Check the error message to determine what the actual problem was.
-                 */
-                fatalError("Unresolved error \(error), \(error.userInfo)")
-            }
-        })
-        return container
-    }()
-    
-}
-
 // MARK: Quick actions from home screen using 3D touch
 extension AppDelegate {
-    
-    enum QuickActions {
-        case addCounter
-        case lastCounter(id: Int)
-        
-        static func from(fullType: String) -> QuickActions? {
-            guard let last = fullType.components(separatedBy: ".").last else { return nil }
-            
-            if last == "addCounter" {
-                return QuickActions.addCounter
-            } else if last.hasPrefix("lastCounter"), let id = Int(last.replacingOccurrences(of: "lastCounter", with: "")) {
-                return QuickActions.lastCounter(id: id)
-            } else {
-                return nil
-            }
-        }
-        
-        @nonobjc var type: String {
-            switch self {
-            case .addCounter:
-                return "\(Bundle.main.bundleIdentifier!).addCounter"
-            case .lastCounter(id: let id):
-                return "\(Bundle.main.bundleIdentifier!).lastCounter\(id)"
-            }
-        }
-    }
     
     
     func handle(shortcutItem: UIApplicationShortcutItem) -> Bool {
@@ -145,22 +106,9 @@ extension AppDelegate {
             handled = true
             AddCounterViewController.addNewCounter()
             
-        case .lastCounter(id: let counterId):
+        case .counter(id: let counterId):
             handled = true
-            guard let counter = Counter.findOrFetch(in: AppDelegate.persistentContainer.viewContext, with: counterId),
-                let rootVC = window?.rootViewController as? UINavigationController else {
-                    break
-            }
-            
-            AddCounterViewController.dismissIfNeeded(animated: false, completion: { (_) in
-            })
-            rootVC.popToRootViewController(animated: false)
-            
-            guard let countersVC = rootVC.topViewController as? CountersViewController else {
-                break
-            }
-            
-            countersVC.presentCounterDetail(for: counter)
+            presentCounter(id: counterId)
         }
         
         return handled
@@ -168,17 +116,13 @@ extension AppDelegate {
     
     func updateDynamicShortCuts() {
         
-        let lastCounters = Counter.lastRunnningCounters(dataContext: AppDelegate.persistentContainer.viewContext)
+        let lastCounters = Counter.lastRunningCounters(dataContext: managedObjectContext, limit: 2)
         
         var actionItems: [UIMutableApplicationShortcutItem] = []
         
         for counter in lastCounters {
             
-            let time = counter.end == nil ? timePassed(since: counter.start) : timePassed(since: counter.start, to: counter.end!)
-            
-            let text = time.days == 1 ? "\(time.days) day" : "\(time.days) days"
-            
-            actionItems.append(UIMutableApplicationShortcutItem(type: QuickActions.lastCounter(id: counter.id.intValue).type, localizedTitle: "\(text) - '\(counter.title)'", localizedSubtitle: "Last edit: \(CounterDetailViewController.shortDateFormatter.string(from: counter.lastEditDate))", icon: UIApplicationShortcutIcon(templateImageName: "eyeIcon"), userInfo: nil))
+            actionItems.append(UIMutableApplicationShortcutItem(type: QuickActions.counter(id: counter.id.intValue).type, localizedTitle: counter.title, localizedSubtitle: "Last edit: \(shortDateFormatter.string(from: counter.lastEditDate))", icon: UIApplicationShortcutIcon(templateImageName: "eyeIcon"), userInfo: nil))
             
         }
         
@@ -193,4 +137,49 @@ extension AppDelegate {
         
         completionHandler(handledShortCutItem)
     }
+    
+    fileprivate func presentCounter(id: Int) {
+        guard let counter = Counter.findOrFetch(in: managedObjectContext, with: id),
+            let rootVC = window?.rootViewController as? UINavigationController else {
+                return
+        }
+        
+        AddCounterViewController.dismissIfNeeded(animated: false, completion: { (_) in
+        })
+        rootVC.popToRootViewController(animated: false)
+        
+        guard let countersVC = rootVC.topViewController as? CountersViewController else {
+            return
+        }
+        
+        countersVC.presentCounterDetail(for: counter)
+    }
+}
+
+extension AppDelegate {
+    
+    func handle(URL url: URL) -> Bool {
+        
+        if url.scheme == urlSchemeDaysCounter,
+            let action = QuickActions.from(fullType: url.absoluteString.replacingOccurrences(of: "daysCounter://", with: "")) {
+            
+            switch action {
+                
+            case .addCounter:
+                AddCounterViewController.addNewCounter()
+                
+            case .counter(let counterId):
+                presentCounter(id: counterId)
+            }
+            
+            return true
+        }
+        return false
+    }
+
+    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+        
+        return handle(URL: url)
+    }
+    
 }

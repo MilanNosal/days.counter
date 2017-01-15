@@ -22,7 +22,7 @@ public class Counter: ManagedObject {
     
     @NSManaged fileprivate(set) var title: String
     
-    @NSManaged fileprivate(set) var lastEditDate: Date
+    @NSManaged var lastEditDate: Date
     
     @NSManaged fileprivate(set) var start: Date
     
@@ -79,7 +79,7 @@ extension Counter: ManagedObjectType {
         ]
     }
     
-    static func lastRunnningCounters(dataContext: NSManagedObjectContext) -> [Counter] {
+    static func lastRunningCounters(dataContext: NSManagedObjectContext, limit: Int) -> [Counter] {
         
         let countersRequest = NSFetchRequest<Counter>(entityName: entityName)
         
@@ -91,7 +91,7 @@ extension Counter: ManagedObjectType {
         
         countersRequest.returnsObjectsAsFaults = false
         
-        countersRequest.fetchLimit = 2
+        countersRequest.fetchLimit = limit
         
         let counters = try! dataContext.fetch(countersRequest)
         return counters.reversed()

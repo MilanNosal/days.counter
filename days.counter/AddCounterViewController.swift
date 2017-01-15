@@ -10,6 +10,28 @@ import UIKit
 
 class AddCounterViewController: KeyboardAdjustingViewController {
     
+    fileprivate let restrictionDelegate: UITextFieldDelegate = {
+        class LengthRestriction: NSObject, UITextFieldDelegate {
+            
+            private let maxLength = 22
+            
+            func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+                
+                let oldLength = textField.text?.characters.count ?? 0
+                let replacementLength = string.characters.count
+                let rangeLength = range.length
+                
+                let newLength = (oldLength - rangeLength) + replacementLength
+                
+                return newLength <= 22
+            }
+        }
+        
+        return LengthRestriction()
+    }()
+    
+    
+    
     fileprivate var dismissalCallback: ((AddCounterViewController) -> Void)?
     fileprivate var answeredCallback: ((AddCounterViewController, String?, Date) -> Void)?
     
@@ -179,6 +201,8 @@ extension AddCounterViewController {
         titleTextField.placeholder = "Counter's title (optional)"
         titleTextField.setContentHuggingPriority(240, for: .horizontal)
         titleTextField.borderStyle = .line
+        
+        titleTextField.delegate = restrictionDelegate
         
         fromLabel.text = "starting at"
         fromSelector.datePickerMode = .dateAndTime
@@ -411,7 +435,7 @@ extension AddCounterViewController {
         AddCounterViewController.show(counter: nil, answeredCallback: {
             (addCounterViewController, title, startDate) in
             
-            AppDelegate.persistentContainer.viewContext.performChanges(completion: {
+            managedObjectContext.performChanges(completion: {
                 success -> Void in
                 
                 if success {
@@ -420,7 +444,7 @@ extension AddCounterViewController {
                 
                 answeredCallback?(addCounterViewController, title, startDate)
             }) {
-                _ = Counter.createCounter(title, startingFrom: startDate, throughContext: AppDelegate.persistentContainer.viewContext)
+                _ = Counter.createCounter(title, startingFrom: startDate, throughContext: managedObjectContext)
             }
         }, dismissalCallback: dismissalCallback)
     }
@@ -433,7 +457,7 @@ extension AddCounterViewController {
         AddCounterViewController.show(counter: counter, answeredCallback: {
             (addCounterViewController, title, startDate) in
             
-            AppDelegate.persistentContainer.viewContext.performChanges(completion: {
+            managedObjectContext.performChanges(completion: {
                 success -> Void in
                 
                 if success {
