@@ -295,7 +295,8 @@ extension CountersViewController: UIViewControllerPreviewingDelegate {
     
     /// Present the view controller for the "Pop" action.
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        navigationController?.pushViewController(counterDetailVC, animated: true)
+//        navigationController?.pushViewController(counterDetailVC, animated: true)
+        navigationController?.show(counterDetailVC, sender: self)
     }
     
 }

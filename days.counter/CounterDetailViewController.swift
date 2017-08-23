@@ -40,9 +40,8 @@ class CounterDetailViewController: UIViewController {
     fileprivate var timer: Timer?
     
     var parentNavigationViewController: UINavigationController?
+    
 }
-
-
 
 extension CounterDetailViewController {
 
@@ -66,6 +65,20 @@ extension CounterDetailViewController {
         
         resetView()
         
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        self.transitionCoordinator?.animate(alongsideTransition: { (context) in
+            self.view.backgroundColor = .black
+        }, completion: { (context) in
+            if context.isCancelled {
+                self.view.backgroundColor = .white
+            } else {
+                self.view.backgroundColor = .blue
+            }
+        })
     }
     
     override func viewDidDisappear(_ animated: Bool) {
