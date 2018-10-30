@@ -67,20 +67,6 @@ extension CounterDetailViewController {
         
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        self.transitionCoordinator?.animate(alongsideTransition: { (context) in
-            self.view.backgroundColor = .black
-        }, completion: { (context) in
-            if context.isCancelled {
-                self.view.backgroundColor = .white
-            } else {
-                self.view.backgroundColor = .blue
-            }
-        })
-    }
-    
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         invalidateTimer()

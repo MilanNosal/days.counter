@@ -47,7 +47,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let shortcutItems = application.shortcutItems, shortcutItems.isEmpty {
             
             updateDynamicShortCuts()
-            
         }
         
         return shouldPerformAdditionalDelegateHandling

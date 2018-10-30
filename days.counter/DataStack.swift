@@ -11,7 +11,7 @@ import CoreData
 
 let managedObjectContext: NSManagedObjectContext = {
     
-    let containerPath = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.com.svagant.days.counter")!.path
+    let containerPath = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.org.valesoft.days.counter")!.path
     let sqlitePath = String(format: "%@/%@", containerPath, "counter.sqlite")
     let storeURL = URL(fileURLWithPath: sqlitePath, isDirectory: false)
     

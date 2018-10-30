@@ -30,7 +30,7 @@ class CountersViewController: UIViewController {
         
         counterDetailVC.parentNavigationViewController = navigationController
         
-        self.title = "Magic Days Counter"
+        self.title = "ValeSoft Days Counter"
         
         setupTableView()
         
@@ -129,7 +129,7 @@ extension CountersViewController: UITableViewDelegate {
         let counter = self.fetchedResultsController.object(at: indexPath)
         
         // touch action
-        let touchAction = UITableViewRowAction(style: .default, title: "Touch", handler: { (action, indexPath) in
+        let touchAction = UITableViewRowAction(style: .default, title: "Restart", handler: { (action, indexPath) in
             
             managedObjectContext.performChanges(completion: {
                 success -> Void in
@@ -138,7 +138,7 @@ extension CountersViewController: UITableViewDelegate {
                     (UIApplication.shared.delegate as! AppDelegate).updateDynamicShortCuts()
                 }
             }) {
-                counter.lastEditDate = Date()
+                counter.update(title: counter.title, startDate: Date())
             }
         })
         touchAction.backgroundColor = UIColor.green

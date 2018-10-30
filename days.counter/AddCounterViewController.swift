@@ -17,8 +17,8 @@ class AddCounterViewController: KeyboardAdjustingViewController {
             
             func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
                 
-                let oldLength = textField.text?.characters.count ?? 0
-                let replacementLength = string.characters.count
+                let oldLength = textField.text?.count ?? 0
+                let replacementLength = string.count
                 let rangeLength = range.length
                 
                 let newLength = (oldLength - rangeLength) + replacementLength
@@ -309,7 +309,7 @@ extension AddCounterViewController {
         }
     }
     
-    fileprivate func dismissPresented(animated: Bool = true, completion: @escaping (Void) -> Void) {
+    fileprivate func dismissPresented(animated: Bool = true, completion: @escaping () -> Void) {
         
         if animated {
             
