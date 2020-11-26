@@ -24,32 +24,31 @@ class KeyboardAdjustingViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        NotificationCenter.default.addObserver(self, selector: #selector(KeyboardAdjustingViewController.keyboardWillShowNotification(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(KeyboardAdjustingViewController.keyboardWillHideNotification(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(KeyboardAdjustingViewController.keyboardWillShowNotification(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(KeyboardAdjustingViewController.keyboardWillHideNotification(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.removeObserver(self)
     }
     
-    func keyboardWillShowNotification(notification: NSNotification) {
+    @objc func keyboardWillShowNotification(notification: NSNotification) {
         updateKeyboardAwareBottomLayoutGuide(with: notification, hiding: false)
     }
     
-    func keyboardWillHideNotification(notification: NSNotification) {
+    @objc func keyboardWillHideNotification(notification: NSNotification) {
         updateKeyboardAwareBottomLayoutGuide(with: notification, hiding: true)
     }
     
     func updateKeyboardAwareBottomLayoutGuide(with notification: NSNotification, hiding: Bool) {
         let userInfo = notification.userInfo
         
-        let animationDuration = (userInfo?[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue
-        let keyboardEndFrame = (userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue
+        let animationDuration = (userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue
+        let keyboardEndFrame = (userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue
         
         
-        let rawAnimationCurve = (userInfo?[UIKeyboardAnimationCurveUserInfoKey] as? NSNumber)?.uint32Value
+        let rawAnimationCurve = (userInfo?[UIResponder.keyboardAnimationCurveUserInfoKey] as? NSNumber)?.uint32Value
         
         guard let animDuration = animationDuration,
             let keybrdEndFrame = keyboardEndFrame,
@@ -60,7 +59,7 @@ class KeyboardAdjustingViewController: UIViewController {
         let convertedKeyboardEndFrame = view.convert(keybrdEndFrame, from: view.window)
         
         let rawAnimCurveAdjsted = UInt(rawAnimCurve << 16)
-        let animationCurve = UIViewAnimationOptions(rawValue: rawAnimCurveAdjsted)
+        let animationCurve = UIView.AnimationOptions(rawValue: rawAnimCurveAdjsted)
         
         topAnchorConstraint.constant = hiding ? 0 : convertedKeyboardEndFrame.size.height
         

@@ -196,7 +196,7 @@ class AddCounterViewController: KeyboardAdjustingViewController {
         headerLabel.text = originalCounter == nil ? "Add new counter" : "Edit \(originalCounter!.title)"
         
         titleTextField.placeholder = "Counter's title (optional)"
-        titleTextField.setContentHuggingPriority(240, for: .horizontal)
+        titleTextField.setContentHuggingPriority(UILayoutPriority(rawValue: 240), for: .horizontal)
         titleTextField.borderStyle = .line
         
         titleTextField.delegate = restrictionDelegate
@@ -242,7 +242,7 @@ class AddCounterViewController: KeyboardAdjustingViewController {
 
 extension AddCounterViewController {
     
-    func outsideTapHappening(sender: UITapGestureRecognizer) {
+    @objc func outsideTapHappening(sender: UITapGestureRecognizer) {
         
         if sender.state == .ended {
             if view.hitTest(sender.location(in: view), with: nil) === view {
@@ -252,7 +252,7 @@ extension AddCounterViewController {
         
     }
     
-    func cancel(sender: Any?) {
+    @objc func cancel(sender: Any?) {
         
         view.endEditing(true)
         
@@ -262,7 +262,7 @@ extension AddCounterViewController {
     }
     
     
-    func confirm(sender: Any?) {
+    @objc func confirm(sender: Any?) {
         
         view.endEditing(true)
         
@@ -292,7 +292,7 @@ extension AddCounterViewController {
             
             let window = UIWindow(frame: UIScreen.main.bounds)
             window.rootViewController = RootViewController()
-            window.windowLevel = UIWindowLevelAlert - 1
+            window.windowLevel = UIWindow.Level.alert - 1
             return window
         }()
     }

@@ -20,13 +20,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var launchedURL: URL?
 
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         // Override point for customization after application launch.
         var shouldPerformAdditionalDelegateHandling = true
         
         // If a shortcut was launched, display its information and take the appropriate action
-        if let shortcutItem = launchOptions?[UIApplicationLaunchOptionsKey.shortcutItem] as? UIApplicationShortcutItem {
+        if let shortcutItem = launchOptions?[UIApplication.LaunchOptionsKey.shortcutItem] as? UIApplicationShortcutItem {
             
             launchedShortcutItem = shortcutItem
             
@@ -34,7 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             shouldPerformAdditionalDelegateHandling = false
         }
         
-        if let url = launchOptions?[UIApplicationLaunchOptionsKey.url] as? URL,
+        if let url = launchOptions?[UIApplication.LaunchOptionsKey.url] as? URL,
             url.scheme == urlSchemeDaysCounter {
             
             launchedURL = url
@@ -176,7 +176,7 @@ extension AppDelegate {
         return false
     }
 
-    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         
         return handle(URL: url)
     }

@@ -159,7 +159,7 @@ extension CountersViewController: UITableViewDelegate {
         // delete action
         let deleteAction = UITableViewRowAction(style: .default, title: "Delete", handler: { (action, indexPath) in
             
-            let deleteAlert = UIAlertController(title: "Delete", message: "Are you sure to delete this counter?", preferredStyle: UIAlertControllerStyle.alert)
+            let deleteAlert = UIAlertController(title: "Delete", message: "Are you sure to delete this counter?", preferredStyle: UIAlertController.Style.alert)
             
             deleteAlert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (action: UIAlertAction!) in
                 
@@ -241,8 +241,8 @@ class CounterTableViewCell: UITableViewCell {
     
     private(set) var counter: Counter?
     
-    
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+
         super.init(style: .value1, reuseIdentifier: reuseIdentifier)
         
         self.backgroundColor = .clear
